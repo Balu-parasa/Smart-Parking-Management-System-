@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Users | SmartPark Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="flex justify-between items-center bg-white shadow px-10 py-4">
+        <div class="flex gap-1">
+            <img src="../static/car_icon.png" style="width: 32px; height: 32px;">
+            <h1 class="text-2xl font-bold text-sky-700">SmartPark</h1>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="text-sky-600 hover:text-sky-800 font-medium">← Back to
+            Dashboard</a>
+    </nav>
+
+    <div class="max-w-6xl mx-auto mt-10 bg-white shadow-lg rounded-2xl p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-700">Manage Users</h2>
+            <button id="deleteBtn"
+                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled>
+                Delete Selected
+            </button>
+        </div>
+
+        {% if users %}
+        <form id="deleteForm" action="{{ url_for('delete_users') }}" method="POST">
+            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3">
+                                <input type="checkbox" id="selectAll"
+                                    class="h-4 w-4 text-sky-600 border-gray-300 rounded">
+                            </th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Username</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Email</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for u in users %}
+                        <tr>
+                            <td class="px-6 py-4">
+                                <input type="checkbox" name="user_ids[]" value="{{ u._id }}"
+                                    class="userCheckbox h-4 w-4 text-sky-600 border-gray-300 rounded">
+                            </td>
+                            <td class="px-6 py-4 text-gray-700 font-medium">{{ u.username }}</td>
+                            <td class="px-6 py-4 text-gray-500">{{ u.email }}</td>
+                            <td class="px-6 py-4 text-gray-500">User</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+        {% else %}
+        <p class="text-gray-500 text-center mt-6">No users found.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        const deleteBtn = document.getElementById('deleteBtn');
+        const checkboxes = document.querySelectorAll('.userCheckbox');
+        const selectAll = document.getElementById('selectAll');
+        const deleteForm = document.getElementById('deleteForm');
+
+        // Select All toggle
+        if (selectAll) {
+            selectAll.addEventListener('change', () => {
+                checkboxes.forEach(cb => cb.checked = selectAll.checked);
+                toggleDeleteButton();
+            });
+        }
+
+        // Individual checkboxes
+        checkboxes.forEach(cb => cb.addEventListener('change', toggleDeleteButton));
+
+        function toggleDeleteButton() {
+            const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+            deleteBtn.disabled = !anyChecked;
+        }
+
+        // Delete confirmation
+        deleteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+            if (selected.length === 0) return;
+
+            if (confirm(`Delete ${selected.length} user(s)? This action cannot be undone.`)) {
+                deleteForm.submit();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Booking Details</title></head>
+<body>
+  <h1>Booking Details</h1>
+  {% if booking %}
+    <p><strong>ID:</strong> {{ booking._id }}</p>
+    <p><strong>User:</strong> {{ booking.get('user_name', booking.get('user_email')) }}</p>
+    <p><strong>Slot:</strong> {{ booking.get('slot') }}</p>
+    <p><strong>Date:</strong> {{ booking.get('date') }}</p>
+    <p><strong>Time:</strong> {{ booking.get('time') }}</p>
+    <p><strong>Paid:</strong> {{ 'Yes' if booking.get('paid') else 'No' }}</p>
+    <p><strong>Other Info:</strong> <pre>{{ booking }}</pre></p>
+  {% else %}
+    <p>Booking not found.</p>
+  {% endif %}
+  <p><a href="{{ url_for('admin_dashboard') }}">Back</a></p>
+</body>
+</html>

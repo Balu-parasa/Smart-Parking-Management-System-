@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>My Bookings - ParkSavvy</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-900 via-sky-900 to-sky-800 min-h-screen text-white p-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-10">
+      <h1 class="text-4xl font-bold tracking-tight">Your Bookings</h1>
+      <a href="{{ url_for('dashboard') }}"
+        class="px-5 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-medium shadow-md transition">
+        ← Back to Dashboard
+      </a>
+    </header>
+
+    {% if bookings %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for b in bookings %}
+      <div class="card rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+        <!-- QR Code -->
+        <div class="flex justify-center mb-4">
+          {% if b.get('user_qr') %}
+          <img src="{{ url_for('static', filename=b.get('user_qr')) }}" alt="QR Code"
+            class="w-32 h-32 object-contain rounded-lg bg-white p-2 shadow-md" />
+          {% else %}
+          <div
+            class="w-32 h-32 bg-white/10 rounded-lg flex items-center justify-center text-gray-400 text-sm shadow-inner">
+            No QR
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Slot Info -->
+        <div class="space-y-2 text-slate-200 text-sm">
+          <p><span class="font-semibold text-white">Location:</span> {{ b.get('location', '-') }}</p>
+          <p><span class="font-semibold text-white">Date:</span> {{ b.get('date', '-') }}</p>
+          <p><span class="font-semibold text-white">Start Time:</span> {{ b.get('start_time', '-') }}</p>
+          <p><span class="font-semibold text-white">End Time:</span> {{ b.get('end_time', '-') }}</p>
+          <p><span class="font-semibold text-white">Vehicle Type:</span> {{ b.get('vehicle_type', '-') }}</p>
+          <p><span class="font-semibold text-white">Plate Number:</span> {{ b.get('plate_number', '-') }}</p>
+          <p><span class="font-semibold text-white">Parking Type:</span> {{ b.get('parking_type', '-') }}</p>
+          <p><span class="font-semibold text-white">Transaction ID:</span> {{ b.get('transaction_id', '-') }}</p>
+          <p><span class="font-semibold text-white">Paid:</span>
+            <span class="{% if b.get('paid') %}text-green-400{% else %}text-red-400{% endif %}">
+              {{ 'Yes' if b.get('paid') else 'No' }}
+            </span>
+          </p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="mt-6 flex flex-wrap gap-3">
+          {% if b.get('ticket_pdf') %}
+          <a href="{{ url_for('static', filename=b.get('ticket_pdf')) }}"
+            class="px-4 py-2 rounded-md bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium transition">
+            Download PDF
+          </a>
+          {% endif %}
+          {% if b.get('user_qr') %}
+          <a href="{{ url_for('download_qr', filename=b.get('user_qr').split('/')[-1]) }}"
+            class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium transition">
+            Download QR
+          </a>
+          {% endif %}
+          {% if session.get('is_admin') %}
+          <a href="{{ url_for('admin_view_booking', booking_id=b._id) }}"
+            class="px-4 py-2 rounded-md bg-slate-700 hover:bg-slate-800 text-white text-sm font-medium transition">
+            Admin View
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-slate-300 mt-20 text-lg">You haven’t made any bookings yet.</p>
+    {% endif %}
+  </div>
+</body>
+</html>

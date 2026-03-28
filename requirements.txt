@@ -1,0 +1,6 @@
+Flask
+flask-pymongo
+werkzeug
+qrcode
+Pillow
+reportlab

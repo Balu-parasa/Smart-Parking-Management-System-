@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Change Password | ParkSavvy</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+  <div class="bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-md text-center">
+    <h2 class="text-2xl font-bold mb-4 text-blue-400">Change Password</h2>
+
+    <form method="POST" action="{{ url_for('change_password') }}" onsubmit="return validatePasswords()">
+      <!-- Username -->
+      <input type="text" id="username" name="username" placeholder="Enter your username"
+        class="w-full p-3 rounded-lg bg-gray-700 mb-4 outline-none text-white" required>
+
+      <!-- New Password -->
+      <input type="password" id="new_password" name="new_password" placeholder="Enter new password"
+        class="w-full p-3 rounded-lg bg-gray-700 mb-4 outline-none text-white" required>
+
+      <!-- Confirm Password -->
+      <input type="password" id="confirm_password" placeholder="Confirm new password"
+        class="w-full p-3 rounded-lg bg-gray-700 mb-4 outline-none text-white" required>
+
+      <!-- Error message -->
+      <p id="error_msg" class="text-red-400 text-sm mb-3 hidden">Passwords do not match.</p>
+
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg font-semibold">
+        Update Password
+      </button>
+    </form>
+
+    <a href="{{ next_page or url_for('login_page') }}" class="text-blue-400 hover:underline block mt-4">← Back</a>
+
+  </div>
+
+  <script>
+    function validatePasswords() {
+      const pass1 = document.getElementById('new_password').value;
+      const pass2 = document.getElementById('confirm_password').value;
+      const errorMsg = document.getElementById('error_msg');
+
+      if (pass1 !== pass2) {
+        errorMsg.classList.remove('hidden');
+        return false;
+      }
+      errorMsg.classList.add('hidden');
+      return true;
+    }
+  </script>
+</body>
+
+</html>

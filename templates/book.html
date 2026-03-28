@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Processing | ParkSavvy</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 1s ease-in forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body class="flex flex-col items-center justify-center h-screen text-white">
+
+  <h1 class="text-4xl font-bold mb-4">Payment Confirmation</h1>
+
+  <div id="payment-section" class="text-center">
+    <img src="{{ generated_qr_url }}" alt="Generated User QR Code"
+      class="p-4 bg-white shadow-lg rounded fade-in mx-auto" width="250" height="250" />
+    <p class="mt-2 text-sm text-gray-300">Your unique entry/exit QR code.</p>
+    <p id="status" class="mt-6 text-xl text-gray-200">⌛ Waiting for Payment...</p>
+    <p id="time-left" class="text-lg text-gray-400 mt-2"></p>
+  </div>
+
+  <script>
+    const status = document.getElementById("status");
+    const timeLeft = document.getElementById("time-left");
+    let seconds = 10;
+
+    // Countdown timer
+    const countdown = setInterval(() => {
+      timeLeft.innerText = `Redirecting in ${seconds} seconds...`;
+      seconds--;
+      if (seconds < 0) {
+        clearInterval(countdown);
+      }
+    }, 1000);
+
+    // Simulate payment success and redirect after 10 seconds
+    setTimeout(() => {
+      status.innerText = "✅ Payment Done Successfully!";
+      status.classList.remove("text-gray-200");
+      status.classList.add("text-green-400", "font-semibold");
+
+      // Redirect to payment_success page
+      setTimeout(() => {
+        window.location.href = "/payment_success/{{ booking_id }}";
+      }, 1000); // short delay to show success
+    }, 10000);
+  </script>
+
+</body>
+
+</html>

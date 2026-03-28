@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Required</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1E293B 0%, #3B82F6 100%);
+        }
+    </style>
+</head>
+
+<body class="flex flex-col items-center justify-center min-h-screen text-white p-4">
+
+    <div class="fixed top-0 w-full z-[100] p-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div
+            class="max-w-xl mx-auto p-3 mb-2 rounded shadow-md text-white 
+                {% if category == 'error' %}bg-red-500{% elif category == 'success' %}bg-green-500{% else %}bg-blue-500{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="bg-white text-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md text-center">
+
+        <h1 class="text-3xl font-bold mb-6 text-sky-700">Scan to Pay</h1>
+
+        <img src="{{ url_for('static', filename='qrcode.png') }}" alt="Merchant QR Code for Payment"
+            class="p-2 bg-gray-100 shadow-md rounded-lg mx-auto" width="200" height="200" />
+
+        <p class="mt-4 text-sm text-gray-600">Scan this code to complete the payment for your booking.</p>
+
+        <hr class="my-6 border-gray-200">
+
+        <form method="POST" action="{{ url_for('payment_page') }}" class="space-y-4">
+            <div>
+                <label for="transaction_id" class="block text-left font-medium text-gray-700 mb-2">Enter Transaction ID
+                    (UTI/Ref. No.)</label>
+                <input type="text" id="transaction_id" name="transaction_id"
+                    placeholder="Paste the 12-digit reference number" required
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-sky-500 focus:border-sky-500 text-lg" />
+            </div>
+            <button type="submit"
+                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold w-full transition duration-200">
+                Submit Payment Confirmation
+            </button>
+        </form>
+    </div>
+</body>
+
+</html>

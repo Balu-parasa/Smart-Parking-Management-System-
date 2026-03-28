@@ -1,0 +1,135 @@
+/* static/payment.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.payment-container {
+    width: 90%;
+    max-width: 400px;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #075985;
+    color: white;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+}
+
+.back-arrow {
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.total {
+    font-size: 14px;
+}
+
+.section {
+    margin-top: 20px;
+}
+
+h3 {
+    font-size: 16px;
+    color: #333;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.option input {
+    margin-right: 10px;
+}
+
+.option label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.option img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.add-new, .more-banks {
+    background: #075985;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.card-icons, .banks {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.card-icons img, .banks img {
+    width: 50px; 
+    height: auto;
+    margin: 0;
+    display: inline-block; 
+}
+
+.bank-option {
+    background: none; 
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bank-option img {
+    width: 50px;
+    height: auto;
+}
+
+.bank-option:hover img {
+    transform: scale(1.1); 
+    transition: transform 0.2s ease-in-out;
+}
+
+@media (max-width: 768px) {
+    .payment-container {
+        padding: 10px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .total {
+        margin-top: 10px;
+    }
+
+    .banks img {
+        width: 40px; 
+    }
+}

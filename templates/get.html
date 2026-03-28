@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parking Booking</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: linear-gradient(to bottom, #34495e, #2c3e50, #455a64);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .availability-box {
+            margin-top: 0.4rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.6rem 1rem 0 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+
+        .availability-box.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen relative">
+
+    <!-- Back Button -->
+    <div class="absolute top-8 right-8 z-[110]">
+        <a href="{{ url_for('dashboard') }}"
+            class="px-5 py-2 bg-sky-600 text-white rounded-lg font-medium shadow-lg hover:bg-sky-700 transition duration-200 ease-in-out transform hover:-translate-y-0.5">
+            &larr; Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Alerts -->
+    <div class="fixed top-0 w-full z-[100] p-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div
+            class="max-w-xl mx-auto p-3 mb-2 rounded shadow-md text-white 
+                {% if category == 'error' %}bg-red-500{% elif category == 'success' %}bg-green-500{% else %}bg-blue-500{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Booking Form -->
+    <div
+        class="flex flex-col md:flex-row w-full max-w-5xl mx-4 bg-white rounded-3xl shadow-2xl overflow-hidden my-8 transition duration-300 hover:shadow-3xl">
+
+        <div class="md:w-1/2 h-80 md:h-auto">
+            <img src="{{ url_for('static', filename='bluecar.webp') }}" alt="Blue Car Parking"
+                class="w-full h-full object-cover">
+        </div>
+
+        <div class="md:w-1/2 p-8 bg-white text-black">
+            <h2 class="text-3xl font-extrabold text-center text-sky-800 mb-8 tracking-tight">Book Your Parking Spot</h2>
+
+            <form id="bookingForm" method="POST" action="{{ url_for('book_slot') }}" class="grid grid-cols-1 gap-5">
+
+                <!-- Location -->
+                <div>
+                    <label for="location" class="block text-sm font-semibold text-gray-700 mb-1">Location</label>
+                    <input type="text" id="location" name="location" placeholder="Enter city or parking area" required
+                        class="p-3 w-full border-2 border-gray-200 focus:border-sky-500 rounded-lg transition duration-150 ease-in-out focus:ring-1 focus:ring-sky-500" />
+                    <div id="availability" class="availability-box"></div>
+                </div>
+
+                <!-- Date and Time -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="date" class="block text-sm font-semibold text-gray-700 mb-1">Date</label>
+                        <input type="date" id="date" name="date" required
+                            class="p-3 w-full border-2 border-gray-200 focus:border-sky-500 rounded-lg transition duration-150 ease-in-out" />
+                    </div>
+                    <div>
+                        <label for="start-time" class="block text-sm font-semibold text-gray-700 mb-1">Start
+                            Time</label>
+                        <input type="time" id="start-time" name="start_time" required
+                            class="p-3 w-full border-2 border-gray-200 focus:border-sky-500 rounded-lg transition duration-150 ease-in-out" />
+                    </div>
+                </div>
+
+                <div>
+                    <label for="end-time" class="block text-sm font-semibold text-gray-700 mb-1">End Time</label>
+                    <input type="time" id="end-time" name="end_time" required
+                        class="p-3 w-full border-2 border-gray-200 focus:border-sky-500 rounded-lg transition duration-150 ease-in-out" />
+                </div>
+
+                <!-- Vehicle Type -->
+                <div>
+                    <label for="vehicle-type" class="block text-sm font-semibold text-gray-700 mb-1">Vehicle
+                        Type</label>
+                    <select id="vehicle-type" name="vehicle_type" required
+                        class="p-3 w-full border-2 border-gray-200 focus:border-sky-500 rounded-lg bg-white transition duration-150 ease-in-out">
+                        <option value="">Select Vehicle Type</option>
+                        <option value="Car">Car</option>
+                        <option value="Motorcycle">Motorcycle</option>
+                        <option value="Truck">Truck</option>
+                        <option value="Electric Vehicle">Electric Vehicle</option>
+                    </select>
+                </div>
+
+                <!-- Vehicle Number -->
+                <div>
+                    <label for="plate-number" class="block text-sm font-semibold text-gray-700 mb-1">Vehicle Number
+                        (License Plate)</label>
+                    <input type="text" id="plate-number" name="plate_number"
+                        placeholder="Enter License Plate (e.g., ABC-123)" required
+                        class="p-3 w-full border-2 border-gray-200 focus:border-sky-500 rounded-lg transition duration-150 ease-in-out focus:ring-1 focus:ring-sky-500" />
+                </div>
+
+                <!-- Parking Type -->
+                <div>
+                    <label for="parking-type" class="block text-sm font-semibold text-gray-700 mb-1">Parking
+                        Preference</label>
+                    <select id="parking-type" name="parking_type" required
+                        class="p-3 w-full border-2 border-gray-200 focus:border-sky-500 rounded-lg bg-white transition duration-150 ease-in-out">
+                        <option value="">Select Parking Type</option>
+                        <option value="Covered Parking">Covered Parking</option>
+                        <option value="Open Parking">Open Parking</option>
+                        <option value="Handicap Accessible">Handicap Accessible</option>
+                        <option value="EV Charging Station">EV Charging Station</option>
+                    </select>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" id="submitBtn"
+                        class="bg-sky-800 hover:bg-sky-700 text-white px-6 py-3 rounded-md font-semibold transition duration-200">
+                        Proceed to Booking
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Availability Check Script -->
+    <!-- Availability Check Script -->
+    <script>
+        const locationInput = document.getElementById('location');
+        const info = document.getElementById('availability');
+        const btn = document.getElementById('submitBtn');
+        let slotsAvailable = false; // track slot availability
+
+        locationInput.addEventListener('blur', async () => {
+            const place = locationInput.value.trim();
+            info.classList.remove('show');
+
+            if (!place) {
+                info.textContent = '';
+                btn.disabled = false;
+                slotsAvailable = false;
+                return;
+            }
+
+            const res = await fetch(`/check_slots?place=${encodeURIComponent(place)}`);
+            const data = await res.json();
+
+            if (data.available) {
+                info.innerHTML = `✅ <span>${data.count} slots available</span>`;
+                info.className = "availability-box text-green-700 show";
+                btn.disabled = false;
+                slotsAvailable = true;
+            } else {
+                info.innerHTML = `❌ <span>No slots available. Please select another area.</span>`;
+                info.className = "availability-box text-red-700 show";
+                btn.disabled = false; // keep button clickable for alert
+                slotsAvailable = false;
+            }
+        });
+
+        // Handle form submit
+        const bookingForm = document.getElementById('bookingForm');
+        bookingForm.addEventListener('submit', (e) => {
+            if (!slotsAvailable) {
+                e.preventDefault(); // stop form submission
+                alert("Slots are not available in that location. Please select another area.");
+            }
+        });
+    </script>
+
+</body>
+
+</html>

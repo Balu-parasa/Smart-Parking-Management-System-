@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile | ParkSavvy</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1f2937, #111827);
+      color: white;
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .profile-card {
+      background-color: rgba(31, 41, 55, 0.9);
+      border-radius: 1rem;
+      padding: 2rem;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      backdrop-filter: blur(6px);
+    }
+
+    .profile-card h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      color: #60a5fa;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.08);
+      border-radius: 0.5rem;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-row span {
+      font-size: 1rem;
+    }
+
+    .edit-btn {
+      background: none;
+      border: none;
+      color: #60a5fa;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+
+    .edit-btn:hover {
+      color: #93c5fd;
+    }
+
+    a.change-password {
+      display: inline-block;
+      margin-top: 1rem;
+      color: #93c5fd;
+      text-decoration: underline;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    a.change-password:hover {
+      color: #bfdbfe;
+    }
+
+    input.edit-input {
+      background: transparent;
+      border: none;
+      color: white;
+      outline: none;
+      width: 70%;
+      font-size: 1rem;
+    }
+
+    .save-btn {
+      background-color: #2563eb;
+      border: none;
+      color: white;
+      padding: 0.5rem 1.2rem;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background 0.3s;
+    }
+
+    .save-btn:hover {
+      background-color: #1d4ed8;
+    }
+
+    .success-msg {
+      background-color: rgba(34, 197, 94, 0.2);
+      color: #86efac;
+      border-left: 4px solid #22c55e;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    /* Back to Dashboard link */
+    .back-dashboard {
+      position: absolute;
+      top: 40px;
+      right: 150px;
+      background-color: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .back-dashboard:hover {
+      background-color: rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <a href="{{ url_for('dashboard') }}" class="back-dashboard">← Back to Dashboard</a>
+
+  <div class="container">
+    <div class="profile-card">
+      <h2>Your Profile</h2>
+
+      {% if success %}
+      <div class="success-msg">{{ success }}</div>
+      {% endif %}
+
+      <form method="POST" action="{{ url_for('update_profile') }}">
+        <div class="info-row">
+          <span>Username:</span>
+          <input type="text" name="username" class="edit-input" value="{{ user.username }}" readonly>
+          <button type="button" class="edit-btn" onclick="toggleEdit(this)">✏️</button>
+        </div>
+
+        <div class="info-row">
+          <span>Email:</span>
+          <input type="email" name="email" class="edit-input" value="{{ user.email }}" readonly>
+          <button type="button" class="edit-btn" onclick="toggleEdit(this)">✏️</button>
+        </div>
+
+        <button type="submit" class="save-btn hidden" id="saveBtn">Save Changes</button>
+      </form>
+
+      <a href="{{ url_for('change_password', next=url_for('profile')) }}" class="change-password">Change Password</a>
+    </div>
+  </div>
+
+  <script>
+    function toggleEdit(btn) {
+      const input = btn.previousElementSibling;
+      input.readOnly = !input.readOnly;
+      input.focus();
+      document.getElementById('saveBtn').classList.remove('hidden');
+    }
+  </script>
+
+</body>
+
+</html>
